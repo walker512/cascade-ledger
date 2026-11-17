@@ -128,3 +128,11 @@ Their primary documentation was inspected, **not** their runtimes. No benchmark,
 Windows/macOS and fresh hosted CI have not been run. Source uses explicit UTF-8/LF bytes for generated outputs, but that is not a claim of executed Windows validation. Symlink/FIFO tests can skip where the OS does not support them; skips are not passes. No browser UI or browser test is part of this CLI. Synthetic tests do not establish user adoption or production accuracy.
 
 MIT license. Original code and examples, copyright walker512. No upstream competitor code or user incident data is bundled.
+
+## Request-level retries, timeout effects and admission policies
+
+The optional [request-policy rehearsal](docs/REQUEST_POLICIES.md) layers a declared workload on the same dependency-health model. Compare the same latency/duplicate/outage challenge under different timeouts, retry backoff, fixed per-tick admission limits, cooldown breakers and an explicit idealized deduplication assumption. Timed-out backend work is not silently canceled; late executions and unfinished work remain visible.
+
+Use `request-compare` and `request-verify` for this separate four-file bundle. The original `compare`/`verify` and their model semantics are unchanged. This adds deterministic scenario calculations, not production fault injection, measured capacity, an interactive graph UI or proof of real idempotency. See the complete event-order rules and synthetic example before applying conclusions.
+
+This increment's public suite has 51 tests (the original 33 unchanged plus 18 request tests), run locally on Linux/Python 3.12. The arithmetic-oracle combinations are cases inside one test, not additional separately reported test methods. No new cross-platform or GUI acceptance is claimed.
