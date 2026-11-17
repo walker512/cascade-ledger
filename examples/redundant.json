@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "ticks": 10,
+  "nodes": [
+    {
+      "id": "db-a",
+      "fail_after": 1,
+      "recover_after": 1,
+      "groups": []
+    },
+    {
+      "id": "db-b",
+      "fail_after": 1,
+      "recover_after": 1,
+      "groups": []
+    },
+    {
+      "id": "api",
+      "fail_after": 1,
+      "recover_after": 1,
+      "groups": [
+        {
+          "id": "database",
+          "providers": [
+            "db-a",
+            "db-b"
+          ],
+          "minimum": 1
+        }
+      ]
+    },
+    {
+      "id": "web",
+      "fail_after": 1,
+      "recover_after": 1,
+      "groups": [
+        {
+          "id": "backend",
+          "providers": [
+            "api"
+          ],
+          "minimum": 1
+        }
+      ]
+    }
+  ],
+  "outages": [
+    {
+      "node": "db-a",
+      "start": 1,
+      "end": 4
+    }
+  ],
+  "assertions": [
+    {
+      "node": "web",
+      "max_down_ticks": 0,
+      "up_at_end": true
+    }
+  ]
+}
