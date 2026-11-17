@@ -1,0 +1,46 @@
+{
+  "assertions": {
+    "max_executions": 1,
+    "max_failed": 0,
+    "max_pending": 0
+  },
+  "policy": {
+    "backoff": 1,
+    "breaker_failures": 0,
+    "breaker_open_ticks": 2,
+    "deduplicate": true,
+    "retries": 1,
+    "start_limit": 10,
+    "timeout": 4
+  },
+  "requests": [
+    {
+      "copies": 2,
+      "id": "write",
+      "latency": 4,
+      "target": "api",
+      "tick": 0
+    }
+  ],
+  "schema": 1,
+  "topology": {
+    "assertions": [
+      {
+        "max_down_ticks": 10,
+        "node": "api",
+        "up_at_end": true
+      }
+    ],
+    "nodes": [
+      {
+        "fail_after": 1,
+        "groups": [],
+        "id": "api",
+        "recover_after": 1
+      }
+    ],
+    "outages": [],
+    "schema": 1,
+    "ticks": 10
+  }
+}
