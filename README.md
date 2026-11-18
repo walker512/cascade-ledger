@@ -136,3 +136,33 @@ The optional [request-policy rehearsal](docs/REQUEST_POLICIES.md) layers a decla
 Use `request-compare` and `request-verify` for this separate four-file bundle. The original `compare`/`verify` and their model semantics are unchanged. This adds deterministic scenario calculations, not production fault injection, measured capacity, an interactive graph UI or proof of real idempotency. See the complete event-order rules and synthetic example before applying conclusions.
 
 This increment's public suite has 51 tests (the original 33 unchanged plus 18 request tests), run locally on Linux/Python 3.12. The arithmetic-oracle combinations are cases inside one test, not additional separately reported test methods. No new cross-platform or GUI acceptance is claimed.
+
+## Private output publication correction (candidate)
+
+Both `compare` and `request-compare` now reserve a new directory with requested
+Unix mode **0700**, and create each bundle file exclusively with requested mode
+**0600 before writing any content**. No process-wide umask change is made. Existing
+files, empty directories, nonempty directories and dangling symlinks are refused,
+not overwritten or chmodded. This matters because bundles include complete
+architecture inputs, failure plans and derived evidence, not a redacted summary.
+
+Use a trusted existing parent directory and a private local account. These modes
+are not encryption, secure erasure, protection against root/same-account malicious
+path replacement, or a guarantee against filesystem ACL overrides. Windows ACL
+isolation is not established by POSIX mode arguments; use operating-system access
+controls. Previously generated public-permission bundles are not automatically
+repaired and past disclosure cannot be undone.
+
+Input validation and computation finish before directory reservation. Publication
+of multiple files is **not atomic**: interruption or I/O failure can leave an
+incomplete private directory. `verify`/`request-verify` reject incomplete bundles;
+preserve or manually remove the partial output as appropriate and retry with a
+new directory. No automatic cleanup, repair or durability guarantee is claimed.
+
+The candidate passed **60 tests, zero skips** on Linux Python 3.12 (51 existing
+plus 9 publication regressions), including both bundle modes under umask 000/022,
+inspection before the first byte, 24-thread competition, eight real CLI processes,
+symlink/file collisions and interrupted-copy rejection. Compileall also passed.
+This is CLI/filesystem evidence only; no browser action was attempted and no new
+Windows/macOS, remote CI, production system or visual acceptance is claimed.
+The broader original interactive-simulation project remains incomplete.
