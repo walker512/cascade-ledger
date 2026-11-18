@@ -156,12 +156,31 @@ def review(report):
     return '\n'.join(lines).encode('utf8')
 
 def outputs(report):return {'report.json':canonical(report),'timeline.csv':timeline(report),'review.md':review(report)}
+def private_write(path, value):
+    """Exclusive file creation; never expose bytes before requesting owner-only mode."""
+    fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY | getattr(os, 'O_BINARY', 0), 0o600)
+    try:
+        with os.fdopen(fd, 'wb') as stream:
+            fd = None
+            stream.write(value)
+    finally:
+        if fd is not None:
+            os.close(fd)
+
+
+def publish(files, out):
+    # Caller supplies a fixed set of generated basenames, not paths from a receipt.
+    folder = Path(out)
+    folder.mkdir(mode=0o700, exist_ok=False)
+    for name, value in files.items():
+        private_write(folder / name, value)
+
+
 def build(left,right,out):
     raws=[read(left),read(right)];report=compare(*raws);files=outputs(report)
     if any(len(v)>OUTPUT_LIMIT for v in files.values()):raise Invalid('Generated output limit exceeded.')
     files.update(dict(zip(('left.json','right.json'),raws)))
-    folder=Path(out);folder.mkdir(exist_ok=False)
-    for name,value in files.items():(folder/name).write_bytes(value)
+    publish(files, out)
     return report
 
 def verify(folder):

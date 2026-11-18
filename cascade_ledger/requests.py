@@ -81,8 +81,7 @@ def outputs(report):
 def build(left,right,out):
  raw=[core.read(left),core.read(right)];report=compare(*raw);files=outputs(report)
  if any(len(v)>core.OUTPUT_LIMIT for v in files.values()):raise core.Invalid('Request report exceeds bound.')
- files.update(dict(zip(('left.json','right.json'),raw)));root=Path(out);root.mkdir(exist_ok=False)
- for k,v in files.items():(root/k).write_bytes(v)
+ files.update(dict(zip(('left.json','right.json'),raw)));core.publish(files,out)
  return report
 
 def verify(folder):
